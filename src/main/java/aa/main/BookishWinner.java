@@ -1,63 +1,46 @@
 package aa.main;
 
+import static aa.main.BookishWinner.GAME_VARS.COINS_PICKED;
+import static aa.main.BookishWinner.GAME_VARS.HITS;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getWorldProperties;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.inc;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.spawn;
 
 import java.util.Map;
-import java.util.Random;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class BookishWinner extends GameApplication {
 
-    private Entity player;
+    public enum GAME_VARS {
+        COINS_PICKED,
+        HITS;
+    }
 
+    private Entity player;
     private Entity coin;
 
     @Override
     protected void initGame() {
-        initPlayer();
-        spanCoin();
-    }
-
-    private void initPlayer() {
-        player = FXGL.entityBuilder()
-                .type(EntityType.PLAYER)
-                .at(487, 770)
-                .viewWithBBox(new Rectangle(25, 25, Color.BLUE))
-                .with(new CollidableComponent(true))
-                .buildAndAttach();
-    }
-
-    private void spanCoin() {
-        final Random random = new Random();
-        final int x = random.nextInt(1024 - 50) + 25;
-        final int y = random.nextInt(800 - 50) + 25;
-
-        coin = FXGL.entityBuilder()
-                .type(EntityType.COIN)
-                .at(x, y)
-                .viewWithBBox(new Circle(25, 25, 25, Color.YELLOW))
-                .with(new CollidableComponent(true))
-                .buildAndAttach();
+        getGameWorld().addEntityFactory(new GameEntityFactory());
+        player = spawn("player");
+        coin = spawn("coin");
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("coinsPicked", 0);
+        vars.put(COINS_PICKED.name(), 0);
+        vars.put(HITS.name(), 0);
     }
 
     @Override
@@ -74,10 +57,11 @@ public class BookishWinner extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
             @Override
             protected void onCollisionBegin(final Entity player, final Entity coin) {
-                inc("coinsPicked", 1);
+                inc(COINS_PICKED.name(), 1);
                 FXGL.play("pick-coin.wav");
                 coin.removeFromWorld();
-                spanCoin();
+
+                BookishWinner.this.coin = spawn("coin");
             }
         });
     }
@@ -88,17 +72,25 @@ public class BookishWinner extends GameApplication {
         coinsPicked.setTranslateX(5);
         coinsPicked.setTranslateY(25);
         coinsPicked.setFont(Font.font("Arial", 24.0));
-
         coinsPicked.textProperty().bind(getWorldProperties()
-                .intProperty("coinsPicked")
+                .intProperty(COINS_PICKED.name())
                 .asString("Coins Picked: %d"));
         getGameScene().addUINode(coinsPicked);
+
+        final Text hits = new Text();
+        hits.setTranslateX(200);
+        hits.setTranslateY(25);
+        hits.setFont(Font.font("Arial", 24.0));
+        hits.textProperty().bind(getWorldProperties()
+                .intProperty(HITS.name())
+                .asString("Hits: %d"));
+        getGameScene().addUINode(hits);
     }
 
     @Override
     protected void initSettings(final GameSettings settings) {
         settings.setTitle("Bookish Winner");
-        settings.setVersion("v0.7");
+        settings.setVersion("v0.8");
         settings.setWidth(1024);
         settings.setHeight(800);
     }

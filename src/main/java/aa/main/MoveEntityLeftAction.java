@@ -1,9 +1,12 @@
 package aa.main;
 
+import static aa.main.BookishWinner.GAME_VARS.HITS;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.inc;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Supplier;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.input.UserAction;
 
@@ -38,6 +41,9 @@ public class MoveEntityLeftAction extends UserAction {
 
         if (offset < 0) {
             entity.translateX(offset);
+        } else {
+            inc(HITS.name(), 1);
+            FXGL.play("hit-wall.wav");
         }
     }
 }
