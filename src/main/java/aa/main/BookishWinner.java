@@ -75,6 +75,7 @@ public class BookishWinner extends GameApplication {
             @Override
             protected void onCollisionBegin(final Entity player, final Entity coin) {
                 inc("coinsPicked", 1);
+                FXGL.play("pick-coin.wav");
                 coin.removeFromWorld();
                 spanCoin();
             }
@@ -97,7 +98,7 @@ public class BookishWinner extends GameApplication {
     @Override
     protected void initSettings(final GameSettings settings) {
         settings.setTitle("Bookish Winner");
-        settings.setVersion("v0.6");
+        settings.setVersion("v0.7");
         settings.setWidth(1024);
         settings.setHeight(800);
     }

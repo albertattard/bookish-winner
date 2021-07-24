@@ -1,3 +1,3 @@
 Bookish Winner Game
 
-- Coins picked score shown in the top left corner 
+- Play sound when coin is picked 
