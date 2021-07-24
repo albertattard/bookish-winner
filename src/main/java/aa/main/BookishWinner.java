@@ -1,5 +1,7 @@
 package aa.main;
 
+import static aa.main.BookishWinner.GAME_VARS.COINS_PICKED;
+import static aa.main.BookishWinner.GAME_VARS.HITS;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getWorldProperties;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.inc;
@@ -22,6 +24,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class BookishWinner extends GameApplication {
+
+    public enum GAME_VARS {
+        COINS_PICKED,
+        HITS;
+    }
 
     private Entity player;
 
@@ -57,7 +64,8 @@ public class BookishWinner extends GameApplication {
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
-        vars.put("coinsPicked", 0);
+        vars.put(COINS_PICKED.name(), 0);
+        vars.put(HITS.name(), 0);
     }
 
     @Override
@@ -74,7 +82,7 @@ public class BookishWinner extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
             @Override
             protected void onCollisionBegin(final Entity player, final Entity coin) {
-                inc("coinsPicked", 1);
+                inc(COINS_PICKED.name(), 1);
                 FXGL.play("pick-coin.wav");
                 coin.removeFromWorld();
                 spanCoin();
@@ -88,17 +96,25 @@ public class BookishWinner extends GameApplication {
         coinsPicked.setTranslateX(5);
         coinsPicked.setTranslateY(25);
         coinsPicked.setFont(Font.font("Arial", 24.0));
-
         coinsPicked.textProperty().bind(getWorldProperties()
-                .intProperty("coinsPicked")
+                .intProperty(COINS_PICKED.name())
                 .asString("Coins Picked: %d"));
         getGameScene().addUINode(coinsPicked);
+
+        final Text hits = new Text();
+        hits.setTranslateX(200);
+        hits.setTranslateY(25);
+        hits.setFont(Font.font("Arial", 24.0));
+        hits.textProperty().bind(getWorldProperties()
+                .intProperty(HITS.name())
+                .asString("Hits: %d"));
+        getGameScene().addUINode(hits);
     }
 
     @Override
     protected void initSettings(final GameSettings settings) {
         settings.setTitle("Bookish Winner");
-        settings.setVersion("v0.7");
+        settings.setVersion("v0.8");
         settings.setWidth(1024);
         settings.setHeight(800);
     }
