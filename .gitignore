@@ -1,0 +1,11 @@
+# IntelliJ
+.idea
+
+# Gradle
+.gradle
+build
+
+# Others
+**/.DS_Store
+logs
+system

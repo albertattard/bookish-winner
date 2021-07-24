@@ -1,0 +1,56 @@
+name: "Build and Release Game"
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Copy Game
+        run: cp build/libs/bookish-winner-all.jar dist/bookish-winner.jar
+      - name: Upload Game
+        uses: actions/upload-artifact@v2
+        with:
+          name: Game
+          path: dist/
+          if-no-files-found: error
+          retention-days: 10
+      - name: Zip Game
+        uses: papeloto/action-zip@v1
+        with:
+          files: dist/
+          dest: game.zip
+      - name: Release Game
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: dist/changes.md
+          draft: false
+          prerelease: false
+      - name: Upload Release Game
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./game.zip
+          asset_name: game.zip
+          asset_content_type: application/zip

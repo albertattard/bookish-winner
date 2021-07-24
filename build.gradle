@@ -1,0 +1,47 @@
+plugins {
+    id "application"
+    id "org.openjfx.javafxplugin" version "0.0.10"
+    id "org.jetbrains.kotlin.jvm" version "1.4.30"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+java {
+    toolchain{
+        languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
+application {
+    mainClass = 'aa.main.BookishWinner'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://nexus.gluonhq.com/nexus/content/repositories/releases/"
+    }
+}
+
+dependencies {
+    implementation "com.github.almasb:fxgl:11.17"
+
+    /* Test */
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.0-M1"
+    testImplementation "org.assertj:assertj-core:3.20.2"
+}
+
+javafx {
+    version = "16"
+    modules = ["javafx.controls", "javafx.graphics", "javafx.fxml", "javafx.media"]
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "failed", "passed", "skipped", "standard_out"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+}
