@@ -2,6 +2,8 @@ package aa.main;
 
 import static aa.main.BookishWinner.GAME_VARS.COINS_PICKED;
 import static aa.main.BookishWinner.GAME_VARS.HITS;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameScene;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getWorldProperties;
@@ -33,7 +35,7 @@ public class BookishWinner extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameEntityFactory());
-        player = spawn("player");
+        player = spawn("player", getAppWidth() / 2, getAppHeight() / 2);
         coin = spawn("coin");
     }
 

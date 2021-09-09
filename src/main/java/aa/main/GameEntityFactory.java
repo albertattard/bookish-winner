@@ -20,7 +20,6 @@ public class GameEntityFactory implements EntityFactory {
     public Entity newPlayer(final SpawnData data) {
         return entityBuilder(data)
                 .type(EntityType.PLAYER)
-                .at(487, 770)
                 .viewWithBBox(new Rectangle(25, 25, Color.BLUE))
                 .with(new CollidableComponent(true))
                 // .with(new AnimationComponent())
